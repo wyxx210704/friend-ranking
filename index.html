@@ -1,0 +1,1449 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>好友排行榜</title>
+    <script type="text/javascript" src="https://assets.pyecharts.org/assets/v6/echarts.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: url('https://picsum.photos/1920/1080') center/cover fixed;
+            font-family: system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .glass-card {
+            padding: 32px;
+            background: rgba(255, 255, 255, 0);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .custom-table {
+            width: 100%;
+            max-width: 700px;
+            border-collapse: collapse;      /* 边框合并，让白色边框干净利落 */
+            background: transparent;        /* 表格本身无背景，完全透明 */
+            border: 2px solid white;        /* 表格外边框为白色，2px 粗细，可调 */
+            border-radius: 16px;            /* 圆角外边框 (仅对表格生效，border-collapse:collapse 会裁剪圆角，但边框效果依然清爽) */
+            overflow: hidden;               /* 配合圆角，让内部直角被裁剪 (非必须) */
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.2); /* 可选：外发光强调白色边框，非必须 */
+        }
+
+        .custom-table th,
+        .custom-table td {
+            padding-right:7px;
+        }
+
+        .up {
+            color: #0f0;
+        }
+
+        .down {
+            color: #f00;
+        }
+
+        .no-up-or-down {
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="glass-card">
+        <h3>表格（个人增减情况视图）</h3>
+        <br>
+        <table class="custom-table">
+            <tr>
+                <th>学号</th>
+                <th>第1周</th>
+                <th>第2周</th>
+                <th>第3周</th>
+                <th>第4周</th>
+                <th>第5周</th>
+                <th>第6周</th>
+                <th>第7周</th>
+                <th>第8周</th>
+                <th>第9周</th>
+            </tr>
+            <tr>
+                <td>52号</td>
+                <td>1<sup class="no-up-or-down">0</sup></td>
+                <td>1<sup class="no-up-or-down">0</sup></td>
+                <td>2<sup class="down">↘1</sup></td>
+                <td>2<sup class="no-up-or-down">0</sup></td>
+                <td>1<sup class="up">↗1</sup></td>
+                <td>5<sup class="down">↘4</sup></td>
+                <td>5<sup class="no-up-or-down">0</sup></td>
+                <td>3<sup class="up">↗2</sup></td>
+                <td>1<sup class="up">↗2</sup></td>
+            </tr>
+            <tr>
+                <td>60号</td>
+                <td>4<sup class="no-up-or-down">0</sup></td>
+                <td>3<sup class="up">↗1</sup></td>
+                <td>3<sup class="no-up-or-down">0</sup></td>
+                <td>3<sup class="no-up-or-down">0</sup></td>
+                <td>3<sup class="no-up-or-down">0</sup></td>
+                <td>3<sup class="no-up-or-down">0</sup></td>
+                <td>4<sup class="down">↘1</sup></td>
+                <td>4<sup class="no-up-or-down">0</sup></td>
+                <td>6<sup class="down">↘2</sup></td>
+            </tr>
+            <tr>
+                <td>17号</td>
+                <td>2<sup class="no-up-or-down">0</sup></td>
+                <td>4<sup class="down">↘2</sup></td>
+                <td>4<sup class="no-up-or-down">0</sup></td>
+                <td>5<sup class="down">↘1</sup></td>
+                <td>5<sup class="no-up-or-down">0</sup></td>
+                <td>4<sup class="up">↗1</sup></td>
+                <td>3<sup class="up">↗1</sup></td>
+                <td>5<sup class="down">↘2</sup></td>
+                <td>3<sup class="up">↗2</sup></td>
+            </tr>
+            <tr>
+                <td>37号</td>
+                <td>无数据</td>
+                <td>9<sup class="no-up-or-down">0</sup></td>
+                <td>5<sup class="up">↗4</sup></td>
+                <td>6<sup class="down">↘1</sup></td>
+                <td>7<sup class="down">↘1</sup></td>
+                <td>7<sup class="no-up-or-down">0</sup></td>
+                <td>7<sup class="no-up-or-down">0</sup></td>
+                <td>7<sup class="no-up-or-down">0</sup></td>
+                <td>9<sup class="down">↘2</sup></td>
+            </tr>
+            <tr>
+                <td>20号</td>
+                <td>9<sup class="no-up-or-down">0</sup></td>
+                <td>无数据</td>
+                <td>7<sup class="no-up-or-down">0</sup></td>
+                <td>9<sup class="down">↘2</sup></td>
+                <td>9<sup class="no-up-or-down">0</sup></td>
+                <td>9<sup class="no-up-or-down">0</sup></td>
+                <td>9<sup class="no-up-or-down">0</sup></td>
+                <td>10<sup class="down">↘1</sup></td>
+                <td>8<sup class="up">↗2</sup></td>
+            </tr>
+            <tr>
+                <td>36号</td>
+                <td>无数据</td>
+                <td>无数据</td>
+                <td>无数据</td>
+                <td>无数据</td>
+                <td>6<sup class="no-up-or-down">0</sup></td>
+                <td>1<sup class="up">↗5</sup></td>
+                <td>2<sup class="down">↘1</sup></td>
+                <td>2<sup class="no-up-or-down">0</sup></td>
+                <td>2<sup class="no-up-or-down">0</sup></td>
+            </tr>
+            <tr>
+                <td>23号</td>
+                <td>10<sup class="no-up-or-down">0</sup></td>
+                <td>10<sup class="no-up-or-down">0</sup></td>
+                <td>9<sup class="up">↗1</sup></td>
+                <td>10<sup class="down">↘1</sup></td>
+                <td>无数据</td>
+                <td>无数据</td>
+                <td>13<sup class="no-up-or-down">0</sup></td>
+                <td>13<sup class="no-up-or-down">0</sup></td>
+                <td>15<sup class="down">↘2</sup></td>
+            </tr>
+            <tr>
+                <td>27号</td>
+                <td>7<sup class="no-up-or-down">0</sup></td>
+                <td>8<sup class="down">↘1</sup></td>
+                <td>6<sup class="up">↗2</sup></td>
+                <td>8<sup class="down">↘2</sup></td>
+                <td>10<sup class="down">↘2</sup></td>
+                <td>10<sup class="no-up-or-down">0</sup></td>
+                <td>10<sup class="no-up-or-down">0</sup></td>
+                <td>6<sup class="up">↗4</sup></td>
+                <td>5<sup class="up">↗1</sup></td>
+            </tr>
+            <tr>
+                <td>40号</td>
+                <td>3<sup class="no-up-or-down">0</sup></td>
+                <td>2<sup class="up">↗1</sup></td>
+                <td>无数据</td>
+                <td>无数据</td>
+                <td>无数据</td>
+                <td>无数据</td>
+                <td>12<sup class="no-up-or-down">0</sup></td>
+                <td>12<sup class="no-up-or-down">0</sup></td>
+                <td>7<sup class="up">↗5</sup></td>
+            </tr>
+            <tr>
+                <td>51号</td>
+                <td>无数据</td>
+                <td>无数据</td>
+                <td>无数据</td>
+                <td>无数据</td>
+                <td>无数据</td>
+                <td>无数据</td>
+                <td>14<sup class="no-up-or-down">0</sup></td>
+                <td>14<sup class="no-up-or-down">0</sup></td>
+                <td>13<sup class="up">↗1</sup></td>
+            </tr>
+            <tr>
+                <td>7号</td>
+                <td>5<sup class="no-up-or-down">0</sup></td>
+                <td>6<sup class="down">↘1</sup></td>
+                <td>无数据</td>
+                <td>4<sup class="no-up-or-down">0</sup></td>
+                <td>4<sup class="no-up-or-down">0</sup></td>
+                <td>6<sup class="down">↘2</sup></td>
+                <td>6<sup class="no-up-or-down">0</sup></td>
+                <td>9<sup class="down">↘3</sup></td>
+                <td>10<sup class="down">↘1</sup></td>
+            </tr>
+            <tr>
+                <td>34号</td>
+                <td>6<sup class="no-up-or-down">0</sup></td>
+                <td>7<sup class="down">↘1</sup></td>
+                <td>8<sup class="down">↘1</sup></td>
+                <td>7<sup class="up">↗1</sup></td>
+                <td>8<sup class="down">↘1</sup></td>
+                <td>8<sup class="no-up-or-down">0</sup></td>
+                <td>8<sup class="no-up-or-down">0</sup></td>
+                <td>8<sup class="no-up-or-down">0</sup></td>
+                <td>12<sup class="down">↘4</sup></td>
+            </tr>
+            <tr>
+                <td>14号</td>
+                <td>无数据</td>
+                <td>无数据</td>
+                <td>10<sup class="no-up-or-down">0</sup></td>
+                <td>无数据</td>
+                <td>无数据</td>
+                <td>无数据</td>
+                <td>11<sup class="no-up-or-down">0</sup></td>
+                <td>11<sup class="no-up-or-down">0</sup></td>
+                <td>14<sup class="down">↘3</sup></td>
+            </tr>
+            <tr>
+                <td>1号</td>
+                <td>8<sup class="no-up-or-down">0</sup></td>
+                <td>5<sup class="up">↗3</sup></td>
+                <td>1<sup class="up">↗4</sup></td>
+                <td>1<sup class="no-up-or-down">0</sup></td>
+                <td>2<sup class="down">↘1</sup></td>
+                <td>2<sup class="no-up-or-down">0</sup></td>
+                <td>1<sup class="up">↗1</sup></td>
+                <td>1<sup class="no-up-or-down">0</sup></td>
+                <td>4<sup class="down">↘3</sup></td>
+            </tr>
+            <tr>
+                <td>41号</td>
+                <td>无数据</td>
+                <td>无数据</td>
+                <td>无数据</td>
+                <td>无数据</td>
+                <td>无数据</td>
+                <td>无数据</td>
+                <td>无数据</td>
+                <td>无数据</td>
+                <td>11<sup class="no-up-or-down">0</sup></td>
+            </tr>
+
+        </table>
+        <br>
+        <h3>统计图（排行榜视图）</h3>
+        <br>
+        <div class="chart-container" id="3f0ff2e2c60e4de5a7c1ae166ccc1b38" style="width:900px; height:500px; "></div>
+    </div>
+    
+    <script>
+        var chart_3f0ff2e2c60e4de5a7c1ae166ccc1b38 = echarts.init(
+            document.getElementById('3f0ff2e2c60e4de5a7c1ae166ccc1b38'), 'white', {renderer: 'canvas', locale: 'ZH'});
+        var option_3f0ff2e2c60e4de5a7c1ae166ccc1b38 = {
+    "animation": true,
+    "animationThreshold": 2000,
+    "animationDuration": 1000,
+    "animationEasing": "cubicOut",
+    "animationDelay": 0,
+    "animationDurationUpdate": 300,
+    "animationEasingUpdate": "cubicOut",
+    "animationDelayUpdate": 0,
+    "aria": {
+        "enabled": false
+    },
+    "series": [
+        {
+            "type": "line",
+            "name": "52\u53f7",
+            "connectNulls": false,
+            "xAxisIndex": 0,
+            "symbolSize": 4,
+            "showSymbol": true,
+            "smooth": false,
+            "clip": true,
+            "step": false,
+            "stackStrategy": "samesign",
+            "data": [
+                [
+                    "\u7b2c1\u5468",
+                    1
+                ],
+                [
+                    "\u7b2c2\u5468",
+                    1
+                ],
+                [
+                    "\u7b2c3\u5468",
+                    2
+                ],
+                [
+                    "\u7b2c4\u5468",
+                    2
+                ],
+                [
+                    "\u7b2c5\u5468",
+                    1
+                ],
+                [
+                    "\u7b2c6\u5468",
+                    5
+                ],
+                [
+                    "\u7b2c7\u5468",
+                    5
+                ],
+                [
+                    "\u7b2c8\u5468",
+                    3
+                ],
+                [
+                    "\u7b2c9\u5468",
+                    1
+                ]
+            ],
+            "hoverAnimation": true,
+            "label": {
+                "show": true,
+                "margin": 8,
+                "richInheritPlainLabel": true,
+                "valueAnimation": false
+            },
+            "logBase": 10,
+            "seriesLayoutBy": "column",
+            "lineStyle": {
+                "show": false
+            },
+            "areaStyle": {
+                "opacity": 0
+            },
+            "zlevel": 0,
+            "z": 0
+        },
+        {
+            "type": "line",
+            "name": "60\u53f7",
+            "connectNulls": false,
+            "xAxisIndex": 0,
+            "symbolSize": 4,
+            "showSymbol": true,
+            "smooth": false,
+            "clip": true,
+            "step": false,
+            "stackStrategy": "samesign",
+            "data": [
+                [
+                    "\u7b2c1\u5468",
+                    4
+                ],
+                [
+                    "\u7b2c2\u5468",
+                    3
+                ],
+                [
+                    "\u7b2c3\u5468",
+                    3
+                ],
+                [
+                    "\u7b2c4\u5468",
+                    3
+                ],
+                [
+                    "\u7b2c5\u5468",
+                    3
+                ],
+                [
+                    "\u7b2c6\u5468",
+                    3
+                ],
+                [
+                    "\u7b2c7\u5468",
+                    4
+                ],
+                [
+                    "\u7b2c8\u5468",
+                    4
+                ],
+                [
+                    "\u7b2c9\u5468",
+                    6
+                ]
+            ],
+            "hoverAnimation": true,
+            "label": {
+                "show": true,
+                "margin": 8,
+                "richInheritPlainLabel": true,
+                "valueAnimation": false
+            },
+            "logBase": 10,
+            "seriesLayoutBy": "column",
+            "lineStyle": {
+                "show": false
+            },
+            "areaStyle": {
+                "opacity": 0
+            },
+            "zlevel": 0,
+            "z": 0
+        },
+        {
+            "type": "line",
+            "name": "17\u53f7",
+            "connectNulls": false,
+            "xAxisIndex": 0,
+            "symbolSize": 4,
+            "showSymbol": true,
+            "smooth": false,
+            "clip": true,
+            "step": false,
+            "stackStrategy": "samesign",
+            "data": [
+                [
+                    "\u7b2c1\u5468",
+                    2
+                ],
+                [
+                    "\u7b2c2\u5468",
+                    4
+                ],
+                [
+                    "\u7b2c3\u5468",
+                    4
+                ],
+                [
+                    "\u7b2c4\u5468",
+                    5
+                ],
+                [
+                    "\u7b2c5\u5468",
+                    5
+                ],
+                [
+                    "\u7b2c6\u5468",
+                    4
+                ],
+                [
+                    "\u7b2c7\u5468",
+                    3
+                ],
+                [
+                    "\u7b2c8\u5468",
+                    5
+                ],
+                [
+                    "\u7b2c9\u5468",
+                    3
+                ]
+            ],
+            "hoverAnimation": true,
+            "label": {
+                "show": true,
+                "margin": 8,
+                "richInheritPlainLabel": true,
+                "valueAnimation": false
+            },
+            "logBase": 10,
+            "seriesLayoutBy": "column",
+            "lineStyle": {
+                "show": false
+            },
+            "areaStyle": {
+                "opacity": 0
+            },
+            "zlevel": 0,
+            "z": 0
+        },
+        {
+            "type": "line",
+            "name": "37\u53f7",
+            "connectNulls": false,
+            "xAxisIndex": 0,
+            "symbolSize": 4,
+            "showSymbol": true,
+            "smooth": false,
+            "clip": true,
+            "step": false,
+            "stackStrategy": "samesign",
+            "data": [
+                [
+                    "\u7b2c1\u5468",
+                    null
+                ],
+                [
+                    "\u7b2c2\u5468",
+                    9
+                ],
+                [
+                    "\u7b2c3\u5468",
+                    5
+                ],
+                [
+                    "\u7b2c4\u5468",
+                    6
+                ],
+                [
+                    "\u7b2c5\u5468",
+                    7
+                ],
+                [
+                    "\u7b2c6\u5468",
+                    7
+                ],
+                [
+                    "\u7b2c7\u5468",
+                    7
+                ],
+                [
+                    "\u7b2c8\u5468",
+                    7
+                ],
+                [
+                    "\u7b2c9\u5468",
+                    9
+                ]
+            ],
+            "hoverAnimation": true,
+            "label": {
+                "show": true,
+                "margin": 8,
+                "richInheritPlainLabel": true,
+                "valueAnimation": false
+            },
+            "logBase": 10,
+            "seriesLayoutBy": "column",
+            "lineStyle": {
+                "show": false
+            },
+            "areaStyle": {
+                "opacity": 0
+            },
+            "zlevel": 0,
+            "z": 0
+        },
+        {
+            "type": "line",
+            "name": "20\u53f7",
+            "connectNulls": false,
+            "xAxisIndex": 0,
+            "symbolSize": 4,
+            "showSymbol": true,
+            "smooth": false,
+            "clip": true,
+            "step": false,
+            "stackStrategy": "samesign",
+            "data": [
+                [
+                    "\u7b2c1\u5468",
+                    9
+                ],
+                [
+                    "\u7b2c2\u5468",
+                    null
+                ],
+                [
+                    "\u7b2c3\u5468",
+                    7
+                ],
+                [
+                    "\u7b2c4\u5468",
+                    9
+                ],
+                [
+                    "\u7b2c5\u5468",
+                    9
+                ],
+                [
+                    "\u7b2c6\u5468",
+                    9
+                ],
+                [
+                    "\u7b2c7\u5468",
+                    9
+                ],
+                [
+                    "\u7b2c8\u5468",
+                    10
+                ],
+                [
+                    "\u7b2c9\u5468",
+                    8
+                ]
+            ],
+            "hoverAnimation": true,
+            "label": {
+                "show": true,
+                "margin": 8,
+                "richInheritPlainLabel": true,
+                "valueAnimation": false
+            },
+            "logBase": 10,
+            "seriesLayoutBy": "column",
+            "lineStyle": {
+                "show": false
+            },
+            "areaStyle": {
+                "opacity": 0
+            },
+            "zlevel": 0,
+            "z": 0
+        },
+        {
+            "type": "line",
+            "name": "36\u53f7",
+            "connectNulls": false,
+            "xAxisIndex": 0,
+            "symbolSize": 4,
+            "showSymbol": true,
+            "smooth": false,
+            "clip": true,
+            "step": false,
+            "stackStrategy": "samesign",
+            "data": [
+                [
+                    "\u7b2c1\u5468",
+                    null
+                ],
+                [
+                    "\u7b2c2\u5468",
+                    null
+                ],
+                [
+                    "\u7b2c3\u5468",
+                    null
+                ],
+                [
+                    "\u7b2c4\u5468",
+                    null
+                ],
+                [
+                    "\u7b2c5\u5468",
+                    6
+                ],
+                [
+                    "\u7b2c6\u5468",
+                    1
+                ],
+                [
+                    "\u7b2c7\u5468",
+                    2
+                ],
+                [
+                    "\u7b2c8\u5468",
+                    2
+                ],
+                [
+                    "\u7b2c9\u5468",
+                    2
+                ]
+            ],
+            "hoverAnimation": true,
+            "label": {
+                "show": true,
+                "margin": 8,
+                "richInheritPlainLabel": true,
+                "valueAnimation": false
+            },
+            "logBase": 10,
+            "seriesLayoutBy": "column",
+            "lineStyle": {
+                "show": false
+            },
+            "areaStyle": {
+                "opacity": 0
+            },
+            "zlevel": 0,
+            "z": 0
+        },
+        {
+            "type": "line",
+            "name": "23\u53f7",
+            "connectNulls": false,
+            "xAxisIndex": 0,
+            "symbolSize": 4,
+            "showSymbol": true,
+            "smooth": false,
+            "clip": true,
+            "step": false,
+            "stackStrategy": "samesign",
+            "data": [
+                [
+                    "\u7b2c1\u5468",
+                    10
+                ],
+                [
+                    "\u7b2c2\u5468",
+                    10
+                ],
+                [
+                    "\u7b2c3\u5468",
+                    9
+                ],
+                [
+                    "\u7b2c4\u5468",
+                    10
+                ],
+                [
+                    "\u7b2c5\u5468",
+                    null
+                ],
+                [
+                    "\u7b2c6\u5468",
+                    null
+                ],
+                [
+                    "\u7b2c7\u5468",
+                    13
+                ],
+                [
+                    "\u7b2c8\u5468",
+                    13
+                ],
+                [
+                    "\u7b2c9\u5468",
+                    15
+                ]
+            ],
+            "hoverAnimation": true,
+            "label": {
+                "show": true,
+                "margin": 8,
+                "richInheritPlainLabel": true,
+                "valueAnimation": false
+            },
+            "logBase": 10,
+            "seriesLayoutBy": "column",
+            "lineStyle": {
+                "show": false
+            },
+            "areaStyle": {
+                "opacity": 0
+            },
+            "zlevel": 0,
+            "z": 0
+        },
+        {
+            "type": "line",
+            "name": "27\u53f7",
+            "connectNulls": false,
+            "xAxisIndex": 0,
+            "symbolSize": 4,
+            "showSymbol": true,
+            "smooth": false,
+            "clip": true,
+            "step": false,
+            "stackStrategy": "samesign",
+            "data": [
+                [
+                    "\u7b2c1\u5468",
+                    7
+                ],
+                [
+                    "\u7b2c2\u5468",
+                    8
+                ],
+                [
+                    "\u7b2c3\u5468",
+                    6
+                ],
+                [
+                    "\u7b2c4\u5468",
+                    8
+                ],
+                [
+                    "\u7b2c5\u5468",
+                    10
+                ],
+                [
+                    "\u7b2c6\u5468",
+                    10
+                ],
+                [
+                    "\u7b2c7\u5468",
+                    10
+                ],
+                [
+                    "\u7b2c8\u5468",
+                    6
+                ],
+                [
+                    "\u7b2c9\u5468",
+                    5
+                ]
+            ],
+            "hoverAnimation": true,
+            "label": {
+                "show": true,
+                "margin": 8,
+                "richInheritPlainLabel": true,
+                "valueAnimation": false
+            },
+            "logBase": 10,
+            "seriesLayoutBy": "column",
+            "lineStyle": {
+                "show": false
+            },
+            "areaStyle": {
+                "opacity": 0
+            },
+            "zlevel": 0,
+            "z": 0
+        },
+        {
+            "type": "line",
+            "name": "40\u53f7",
+            "connectNulls": false,
+            "xAxisIndex": 0,
+            "symbolSize": 4,
+            "showSymbol": true,
+            "smooth": false,
+            "clip": true,
+            "step": false,
+            "stackStrategy": "samesign",
+            "data": [
+                [
+                    "\u7b2c1\u5468",
+                    3
+                ],
+                [
+                    "\u7b2c2\u5468",
+                    2
+                ],
+                [
+                    "\u7b2c3\u5468",
+                    null
+                ],
+                [
+                    "\u7b2c4\u5468",
+                    null
+                ],
+                [
+                    "\u7b2c5\u5468",
+                    null
+                ],
+                [
+                    "\u7b2c6\u5468",
+                    null
+                ],
+                [
+                    "\u7b2c7\u5468",
+                    12
+                ],
+                [
+                    "\u7b2c8\u5468",
+                    12
+                ],
+                [
+                    "\u7b2c9\u5468",
+                    7
+                ]
+            ],
+            "hoverAnimation": true,
+            "label": {
+                "show": true,
+                "margin": 8,
+                "richInheritPlainLabel": true,
+                "valueAnimation": false
+            },
+            "logBase": 10,
+            "seriesLayoutBy": "column",
+            "lineStyle": {
+                "show": false
+            },
+            "areaStyle": {
+                "opacity": 0
+            },
+            "zlevel": 0,
+            "z": 0
+        },
+        {
+            "type": "line",
+            "name": "51\u53f7",
+            "connectNulls": false,
+            "xAxisIndex": 0,
+            "symbolSize": 4,
+            "showSymbol": true,
+            "smooth": false,
+            "clip": true,
+            "step": false,
+            "stackStrategy": "samesign",
+            "data": [
+                [
+                    "\u7b2c1\u5468",
+                    null
+                ],
+                [
+                    "\u7b2c2\u5468",
+                    null
+                ],
+                [
+                    "\u7b2c3\u5468",
+                    null
+                ],
+                [
+                    "\u7b2c4\u5468",
+                    null
+                ],
+                [
+                    "\u7b2c5\u5468",
+                    null
+                ],
+                [
+                    "\u7b2c6\u5468",
+                    null
+                ],
+                [
+                    "\u7b2c7\u5468",
+                    14
+                ],
+                [
+                    "\u7b2c8\u5468",
+                    14
+                ],
+                [
+                    "\u7b2c9\u5468",
+                    13
+                ]
+            ],
+            "hoverAnimation": true,
+            "label": {
+                "show": true,
+                "margin": 8,
+                "richInheritPlainLabel": true,
+                "valueAnimation": false
+            },
+            "logBase": 10,
+            "seriesLayoutBy": "column",
+            "lineStyle": {
+                "show": false
+            },
+            "areaStyle": {
+                "opacity": 0
+            },
+            "zlevel": 0,
+            "z": 0
+        },
+        {
+            "type": "line",
+            "name": "7\u53f7",
+            "connectNulls": false,
+            "xAxisIndex": 0,
+            "symbolSize": 4,
+            "showSymbol": true,
+            "smooth": false,
+            "clip": true,
+            "step": false,
+            "stackStrategy": "samesign",
+            "data": [
+                [
+                    "\u7b2c1\u5468",
+                    5
+                ],
+                [
+                    "\u7b2c2\u5468",
+                    6
+                ],
+                [
+                    "\u7b2c3\u5468",
+                    null
+                ],
+                [
+                    "\u7b2c4\u5468",
+                    4
+                ],
+                [
+                    "\u7b2c5\u5468",
+                    4
+                ],
+                [
+                    "\u7b2c6\u5468",
+                    6
+                ],
+                [
+                    "\u7b2c7\u5468",
+                    6
+                ],
+                [
+                    "\u7b2c8\u5468",
+                    9
+                ],
+                [
+                    "\u7b2c9\u5468",
+                    10
+                ]
+            ],
+            "hoverAnimation": true,
+            "label": {
+                "show": true,
+                "margin": 8,
+                "richInheritPlainLabel": true,
+                "valueAnimation": false
+            },
+            "logBase": 10,
+            "seriesLayoutBy": "column",
+            "lineStyle": {
+                "show": false
+            },
+            "areaStyle": {
+                "opacity": 0
+            },
+            "zlevel": 0,
+            "z": 0
+        },
+        {
+            "type": "line",
+            "name": "34\u53f7",
+            "connectNulls": false,
+            "xAxisIndex": 0,
+            "symbolSize": 4,
+            "showSymbol": true,
+            "smooth": false,
+            "clip": true,
+            "step": false,
+            "stackStrategy": "samesign",
+            "data": [
+                [
+                    "\u7b2c1\u5468",
+                    6
+                ],
+                [
+                    "\u7b2c2\u5468",
+                    7
+                ],
+                [
+                    "\u7b2c3\u5468",
+                    8
+                ],
+                [
+                    "\u7b2c4\u5468",
+                    7
+                ],
+                [
+                    "\u7b2c5\u5468",
+                    8
+                ],
+                [
+                    "\u7b2c6\u5468",
+                    8
+                ],
+                [
+                    "\u7b2c7\u5468",
+                    8
+                ],
+                [
+                    "\u7b2c8\u5468",
+                    8
+                ],
+                [
+                    "\u7b2c9\u5468",
+                    12
+                ]
+            ],
+            "hoverAnimation": true,
+            "label": {
+                "show": true,
+                "margin": 8,
+                "richInheritPlainLabel": true,
+                "valueAnimation": false
+            },
+            "logBase": 10,
+            "seriesLayoutBy": "column",
+            "lineStyle": {
+                "show": false
+            },
+            "areaStyle": {
+                "opacity": 0
+            },
+            "zlevel": 0,
+            "z": 0
+        },
+        {
+            "type": "line",
+            "name": "14\u53f7",
+            "connectNulls": false,
+            "xAxisIndex": 0,
+            "symbolSize": 4,
+            "showSymbol": true,
+            "smooth": false,
+            "clip": true,
+            "step": false,
+            "stackStrategy": "samesign",
+            "data": [
+                [
+                    "\u7b2c1\u5468",
+                    null
+                ],
+                [
+                    "\u7b2c2\u5468",
+                    null
+                ],
+                [
+                    "\u7b2c3\u5468",
+                    10
+                ],
+                [
+                    "\u7b2c4\u5468",
+                    null
+                ],
+                [
+                    "\u7b2c5\u5468",
+                    null
+                ],
+                [
+                    "\u7b2c6\u5468",
+                    null
+                ],
+                [
+                    "\u7b2c7\u5468",
+                    11
+                ],
+                [
+                    "\u7b2c8\u5468",
+                    11
+                ],
+                [
+                    "\u7b2c9\u5468",
+                    14
+                ]
+            ],
+            "hoverAnimation": true,
+            "label": {
+                "show": true,
+                "margin": 8,
+                "richInheritPlainLabel": true,
+                "valueAnimation": false
+            },
+            "logBase": 10,
+            "seriesLayoutBy": "column",
+            "lineStyle": {
+                "show": false
+            },
+            "areaStyle": {
+                "opacity": 0
+            },
+            "zlevel": 0,
+            "z": 0
+        },
+        {
+            "type": "line",
+            "name": "1\u53f7",
+            "connectNulls": false,
+            "xAxisIndex": 0,
+            "symbolSize": 4,
+            "showSymbol": true,
+            "smooth": false,
+            "clip": true,
+            "step": false,
+            "stackStrategy": "samesign",
+            "data": [
+                [
+                    "\u7b2c1\u5468",
+                    8
+                ],
+                [
+                    "\u7b2c2\u5468",
+                    5
+                ],
+                [
+                    "\u7b2c3\u5468",
+                    1
+                ],
+                [
+                    "\u7b2c4\u5468",
+                    1
+                ],
+                [
+                    "\u7b2c5\u5468",
+                    2
+                ],
+                [
+                    "\u7b2c6\u5468",
+                    2
+                ],
+                [
+                    "\u7b2c7\u5468",
+                    1
+                ],
+                [
+                    "\u7b2c8\u5468",
+                    1
+                ],
+                [
+                    "\u7b2c9\u5468",
+                    4
+                ]
+            ],
+            "hoverAnimation": true,
+            "label": {
+                "show": true,
+                "margin": 8,
+                "richInheritPlainLabel": true,
+                "valueAnimation": false
+            },
+            "logBase": 10,
+            "seriesLayoutBy": "column",
+            "lineStyle": {
+                "show": false
+            },
+            "areaStyle": {
+                "opacity": 0
+            },
+            "zlevel": 0,
+            "z": 0
+        },
+        {
+            "type": "line",
+            "name": "41\u53f7",
+            "connectNulls": false,
+            "xAxisIndex": 0,
+            "symbolSize": 4,
+            "showSymbol": true,
+            "smooth": false,
+            "clip": true,
+            "step": false,
+            "stackStrategy": "samesign",
+            "data": [
+                [
+                    "\u7b2c1\u5468",
+                    null
+                ],
+                [
+                    "\u7b2c2\u5468",
+                    null
+                ],
+                [
+                    "\u7b2c3\u5468",
+                    null
+                ],
+                [
+                    "\u7b2c4\u5468",
+                    null
+                ],
+                [
+                    "\u7b2c5\u5468",
+                    null
+                ],
+                [
+                    "\u7b2c6\u5468",
+                    null
+                ],
+                [
+                    "\u7b2c7\u5468",
+                    null
+                ],
+                [
+                    "\u7b2c8\u5468",
+                    null
+                ],
+                [
+                    "\u7b2c9\u5468",
+                    11
+                ]
+            ],
+            "hoverAnimation": true,
+            "label": {
+                "show": true,
+                "margin": 8,
+                "richInheritPlainLabel": true,
+                "valueAnimation": false
+            },
+            "logBase": 10,
+            "seriesLayoutBy": "column",
+            "lineStyle": {
+                "show": false
+            },
+            "areaStyle": {
+                "opacity": 0
+            },
+            "zlevel": 0,
+            "z": 0
+        }
+    ],
+    "legend": [
+        {
+            "data": [
+                "52\u53f7",
+                "60\u53f7",
+                "17\u53f7",
+                "37\u53f7",
+                "20\u53f7",
+                "36\u53f7",
+                "23\u53f7",
+                "27\u53f7",
+                "40\u53f7",
+                "51\u53f7",
+                "7\u53f7",
+                "34\u53f7",
+                "14\u53f7",
+                "1\u53f7",
+                "41\u53f7"
+            ],
+            "selected": {},
+            "show": true,
+            "padding": 5,
+            "itemGap": 10,
+            "itemWidth": 25,
+            "itemHeight": 14,
+            "backgroundColor": "transparent",
+            "borderColor": "#ccc",
+            "borderRadius": 0,
+            "pageButtonItemGap": 5,
+            "pageButtonPosition": "end",
+            "pageFormatter": "{current}/{total}",
+            "pageIconColor": "#2f4554",
+            "pageIconInactiveColor": "#aaa",
+            "pageIconSize": 15,
+            "animationDurationUpdate": 800,
+            "selector": false,
+            "selectorPosition": "auto",
+            "selectorItemGap": 7,
+            "selectorButtonGap": 10,
+            "triggerEvent": false
+        }
+    ],
+    "tooltip": {
+        "show": true,
+        "trigger": "axis",
+        "triggerOn": "mousemove|click",
+        "axisPointer": {
+            "type": "line"
+        },
+        "showContent": true,
+        "alwaysShowContent": false,
+        "showDelay": 0,
+        "hideDelay": 100,
+        "enterable": false,
+        "confine": false,
+        "appendToBody": false,
+        "transitionDuration": 0.4,
+        "displayTransition": true,
+        "textStyle": {
+            "fontSize": 14,
+            "richInheritPlainLabel": true
+        },
+        "backgroundColor": "#ffffff77",
+        "borderWidth": 0,
+        "padding": 5,
+        "order": "seriesAsc"
+    },
+    "xAxis": [
+        {
+            "name": "\u5468",
+            "show": true,
+            "scale": false,
+            "nameLocation": "end",
+            "nameGap": 15,
+            "nameTruncate": {},
+            "nameMoveOverlap": true,
+            "inverse": false,
+            "offset": 0,
+            "splitNumber": 5,
+            "minInterval": 0,
+            "silent": false,
+            "triggerEvent": false,
+            "splitLine": {
+                "show": true,
+                "lineStyle": {
+                    "show": false
+                }
+            },
+            "animation": true,
+            "animationThreshold": 2000,
+            "animationDuration": 1000,
+            "animationEasing": "cubicOut",
+            "animationDelay": 0,
+            "animationDurationUpdate": 300,
+            "animationEasingUpdate": "cubicOut",
+            "animationDelayUpdate": 0,
+            "data": [
+                "\u7b2c1\u5468",
+                "\u7b2c2\u5468",
+                "\u7b2c3\u5468",
+                "\u7b2c4\u5468",
+                "\u7b2c5\u5468",
+                "\u7b2c6\u5468",
+                "\u7b2c7\u5468",
+                "\u7b2c8\u5468",
+                "\u7b2c9\u5468"
+            ]
+        }
+    ],
+    "yAxis": [
+        {
+            "name": "\u6392\u540d",
+            "show": true,
+            "scale": false,
+            "nameLocation": "end",
+            "nameGap": 15,
+            "nameTruncate": {},
+            "nameMoveOverlap": true,
+            "inverse": true,
+            "offset": 0,
+            "splitNumber": 5,
+            "minInterval": 0,
+            "silent": false,
+            "triggerEvent": false,
+            "splitLine": {
+                "show": true,
+                "lineStyle": {
+                    "show": false
+                }
+            },
+            "animation": true,
+            "animationThreshold": 2000,
+            "animationDuration": 1000,
+            "animationEasing": "cubicOut",
+            "animationDelay": 0,
+            "animationDurationUpdate": 300,
+            "animationEasingUpdate": "cubicOut",
+            "animationDelayUpdate": 0
+        }
+    ],
+    "title": [
+        {
+            "show": true,
+            "text": "\u597d\u53cb\u6392\u884c\u699c",
+            "target": "blank",
+            "subtarget": "blank",
+            "padding": 5,
+            "itemGap": 10,
+            "textAlign": "auto",
+            "textVerticalAlign": "auto",
+            "triggerEvent": false
+        }
+    ]
+};
+        chart_3f0ff2e2c60e4de5a7c1ae166ccc1b38.setOption(option_3f0ff2e2c60e4de5a7c1ae166ccc1b38);
+    </script>
+</body>
+</html>
